@@ -1,0 +1,80 @@
+ALTER TABLE `users` ADD `deleted_at` TIMESTAMP NULL DEFAULT NULL AFTER `updated_at`;
+ALTER TABLE `users` ADD `is_popular` BOOLEAN NULL DEFAULT FALSE COMMENT '0 for popular 1 for not popular' AFTER `is_blocked`;
+ALTER TABLE `proposals` CHANGE `job_id` `job_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `notifications` ADD `is_read` BOOLEAN NOT NULL DEFAULT FALSE COMMENT '0 for not read 1 for read' AFTER `title`;
+ALTER TABLE `subscriptions` CHANGE `stripe_id` `stripe_id` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+ALTER TABLE `notifications` CHANGE `type` `type` ENUM('proposal','quote','review','admin') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;
+ALTER TABLE `proposals` ADD `is_draft` BOOLEAN NOT NULL COMMENT '0 for not draft 1 for draft' AFTER `message`;
+ALTER TABLE `proposals` ADD `is_saved` BOOLEAN NOT NULL COMMENT '0 for not saved 1 for saved' AFTER `is_draft`;
+ALTER TABLE `saves` ADD `job_id` BIGINT NULL DEFAULT NULL AFTER `homeowner_id`;
+ALTER TABLE `users` ADD `address_2` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL AFTER `home_address`;
+ALTER TABLE `users` ADD `tab` VARCHAR(191) NULL DEFAULT NULL AFTER `remember_token`;
+ALTER TABLE `files` ADD `service_id` TINYINT NULL DEFAULT NULL AFTER `type`;
+
+ALTER TABLE `company_details` ADD `card_holder_name` VARCHAR(255) NULL AFTER `fax_number`;
+ALTER TABLE `users` ADD `update_web_notification` TINYINT(1) NULL DEFAULT '0' AFTER `is_popular`;
+ALTER TABLE `company_details` ADD `service_qoute_notication` TINYINT(1) NULL DEFAULT '0' AFTER `twitter_link`;
+ALTER TABLE `company_details` ADD `review_notification` TINYINT(1) NULL DEFAULT '0' AFTER `service_qoute_notication`;
+ALTER TABLE `general_contractor` CHANGE `description` `description` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+ALTER TABLE `professional` CHANGE `description` `description` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+ALTER TABLE `owner` CHANGE `description` `description` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+ALTER TABLE `sub_contractor` CHANGE `description` `description` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+ALTER TABLE `supplier` CHANGE `description` `description` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+ALTER TABLE `products` CHANGE `type` `type` ENUM('available','not_available') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;
+ALTER TABLE `projects` CHANGE `description` `description` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+ALTER TABLE `files` ADD `original_name` VARCHAR(255) NOT NULL AFTER `type`;
+ALTER TABLE `files` CHANGE `original_name` `original_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `files` CHANGE `service_id` `service_id` BIGINT(4) NULL DEFAULT NULL;
+ALTER TABLE `files` CHANGE `service_id` `service_id` BIGINT(20) NULL DEFAULT NULL;
+ALTER TABLE `files` CHANGE `service_id` `service_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL;
+
+ALTER TABLE `files` ADD `project_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `product_id`;
+ALTER TABLE `jobs` ADD `is_draft` BOOLEAN NOT NULL AFTER `type`;
+ALTER TABLE `jobs` ADD `is_saved` BOOLEAN NOT NULL AFTER `type`;
+
+ALTER TABLE `jobs` CHANGE `description` `description` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `subscriptions` CHANGE `stripe_plan` `stripe_plan` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+ALTER TABLE `subscriptions` CHANGE `quantity` `quantity` INT(11) NULL;
+ALTER TABLE `jobs` ADD `longitude` VARCHAR(191) NULL AFTER `location`;
+ALTER TABLE `jobs` ADD `latitude` VARCHAR(191) NULL AFTER `longitude`;
+
+ALTER TABLE `subscriptions` ADD `status` INT NOT NULL DEFAULT '1' AFTER `ends_at`;
+ALTER TABLE `subscriptions` ADD `count` INT NOT NULL DEFAULT '0' AFTER `quantity`;
+
+ALTER TABLE `proposals` ADD `status` ENUM('accept','reject','pending') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `message`;
+ALTER TABLE `proposals` CHANGE `status` `status` ENUM('accept','reject','pending') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+ALTER TABLE `proposals` CHANGE `status` `status` ENUM('accept','reject','pending') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'pending';
+
+
+ALTER TABLE `admins` ADD `profile_pic` VARCHAR(191) NULL AFTER `password`;
+
+ALTER TABLE `job_speciality` ADD `image_path` VARCHAR(1000) NULL DEFAULT NULL AFTER `title`;
+
+ALTER TABLE `users` ADD `longitude_two` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL AFTER `latitude`;
+ALTER TABLE `users` ADD `latitude_two` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL AFTER `longitude_two`;
+
+// no need to run
+ALTER TABLE `specialities` ADD `company-id` TINYINT NULL DEFAULT NULL AFTER `job_id`;
+ALTER TABLE `specialities` CHANGE `company-id` `company_id` BIGINT(20) NULL DEFAULT NULL;
+// no need to run
+
+ALTER TABLE `specialities` CHANGE `company_id` `company_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `notifications` ADD `proposal_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `to_user`;
+ALTER TABLE `notifications` ADD CONSTRAINT `notificatins_proposal_id_foreign` FOREIGN KEY (`proposal_id`) REFERENCES `proposals`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+
+ALTER TABLE `users` ADD `phone_code` VARCHAR(255) NULL DEFAULT NULL AFTER `is_email_verified`;
+ALTER TABLE `users` CHANGE `gender` `gender` ENUM('male','female','other') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+ALTER TABLE `users` ADD `activity_on_job` TINYINT NULL DEFAULT '0' AFTER `update_web_notification`;
+
+ALTER TABLE `products` ADD `lat` VARCHAR(255) NULL DEFAULT NULL AFTER `location`;
+ALTER TABLE `products` ADD `lng` VARCHAR(255) NULL DEFAULT NULL AFTER `lat`;
+ALTER TABLE `jobs` ADD `extrnal_link` TEXT NULL DEFAULT NULL AFTER `budget_end`;
+ALTER TABLE `products` DROP FOREIGN KEY `products_company_id_foreign`; 
+ALTER TABLE `products` ADD CONSTRAINT `products_company_id_foreign` FOREIGN KEY (`company_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `subscriptions` ADD `bids` VARCHAR(255) NULL DEFAULT NULL AFTER `name`;
+ALTER TABLE `company_details` ADD `profile_type` ENUM('residential','commercial','both') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `user_id`;
+
+ALTER TABLE `proposals` ADD `match_specialties` INT(255) NOT NULL DEFAULT '0' AFTER `job_id`;
+ALTER TABLE `job_speciality` ADD `is_popular` BOOLEAN NOT NULL DEFAULT FALSE AFTER `image_path`;

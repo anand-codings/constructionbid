@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Laravel\Cashier\Http\Controllers\WebhookController as CashierController;
+class WebhookController extends CashierController
+{
+    protected $except = [
+        'stripe/*',
+    ];
+    
+}
